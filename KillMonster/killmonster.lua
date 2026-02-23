@@ -1,0 +1,55 @@
+-- killmonster.lua
+if not _G.KillMonsterScriptLoaded then
+    LogAdd(LOG_BLUE,"[LuaScript.killmonster] SCRIPT LOADED SUCCESSFULLY - By PSYCHE")
+    _G.KillMonsterScriptLoaded = true
+end
+murequire("LuaScript.configkillmonster")  -- 只加载配置，不要加载自己
+BridgeFunctionAttach("OnMonsterDie", "BridgeFunction_OnMonsterDie")
+
+-- 新增：按权重随机选择物品（核心函数，不影响原有逻辑）
+local function getRandomItemByRate(dropList)
+    local totalRate = 0
+    -- 计算总权重
+    for _, item in ipairs(dropList) do
+        totalRate = totalRate + (item.Rate or 0)
+    end
+    -- 总权重为0时返回nil（防止报错）
+    if totalRate <= 0 then return nil end
+    -- 随机一个权重值
+    local randomNum = math.random(1, totalRate)
+    local currentRate = 0
+    -- 匹配随机值对应的物品
+    for _, item in ipairs(dropList) do
+        currentRate = currentRate + (item.Rate or 0)
+        if randomNum <= currentRate then
+            return item
+        end
+    end
+    return nil
+end
+
+-- 原有核心函数，仅替换随机掉落部分
+function BridgeFunction_OnMonsterDie(monsterIndex, killerIndex)
+    local monster = GetUser(monsterIndex)
+    local killer = GetUser(killerIndex)
+    if killer ~= nil and killer.Type == 1 then
+        GCNoticeSend(killer.Index, 1, "自己可见的公告提示!")
+        -- 公告：玩家名字 + 怪物等级
+        GCNoticeSendToAll(1, killer.Name .. " 击杀了怪物 (Class=".. monster.Class ..", Level=".. monster.Level ..")")
+        -- 判断怪物等级是否达到阈值（≥100才触发）
+        if monster ~= nil and monster.Level >= Config.MonsterLevelThreshold then
+            local dropList = Config.DropItems
+            -- 替换：从纯随机 → 按权重随机
+            local item = getRandomItemByRate(dropList)
+            -- 增加空值判断（防止无权重物品报错）
+            if item then
+                -- 掉落物品（原有API参数完全不变）
+                ItemDropEx(killer.Index, killer.Map, killer.X, killer.Y,
+                    item.ID, 0, 255, 1, 1, 7, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0,0)
+                -- 公告掉落结果（原有文案不变）
+                GCNoticeSendToAll(1, killer.Name .. " 击杀高等级怪物，掉落了 [".. item.Name .. "]")
+            end
+        end
+    end
+    return 0
+end
