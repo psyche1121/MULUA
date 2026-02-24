@@ -16,9 +16,9 @@ function BridgeFunction_OnCharacterEntry(aIndex)
     local welcomeMessage = string.format("欢迎您，%s！祝您游戏愉快！", player.Name)
 
     -- 向该玩家发送私人欢迎信息
-    -- GCNoticeSendToUser(aIndex, type, msg)
+    -- GCNoticeSend(aIndex, type, msg)
     -- 类型 1: 通知显示在屏幕右上角。
-    GCNoticeSendToUser(aIndex, 1, welcomeMessage)
+    GCNoticeSend(aIndex, 1, welcomeMessage)
 
     -- 将操作记录到服务器控制台以进行调试（绿色）
     LogAdd(3, "[PlayerNotice] 已为玩家 " .. player.Name .. " 发送私人欢迎信息。")
