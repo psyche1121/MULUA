@@ -1,0 +1,141 @@
+
+-- GameObject (User/Monster) Property Dictionary
+-- This file lists all available properties for a player or monster object.
+-- Use it as a reference for your scripts.
+-- Format: PropertyName -- Description "DataType"
+
+-- Core Identifiers & Status
+Index -- Object index. "Integer"
+AccountIndex -- Account index. "Integer"
+CharacterIndex -- Character index. "Integer"
+Connected -- Connection status (0=Empty, 1=Connected, 2=Playing). "Integer"
+Type -- Object Type (1=User, 2=Monster, 3=NPC). "Integer"
+Live -- Alive status (1=Alive, 0=Dead). "Integer"
+Account -- Account ID. "String"
+Name -- Character Name. "String"
+IpAddr -- IP Address. "String"
+HardwareId -- HWID. "String"
+
+-- Class & Level
+Class -- Character Class (e.g., 0=DW, 1=DK). "Integer"
+DBClass -- Database Class ID. "Integer"
+ChangeUp -- Evolution level (0, 1, 2, 3). "Integer"
+Level -- Current Level. "Integer"
+LevelUpPoint -- Available stat points. "Integer"
+Experience -- Current Experience. "Integer"
+NextExperience -- XP needed for next level. "Integer"
+MasterLevel -- Current Master Level. "Integer"
+MasterPoint -- Master Points available. "Integer"
+MasterExperience -- Master Experience. "Integer"
+MasterNextExperience -- Next Master Exp. "Integer"
+Reset -- Reset Count. "Integer"
+MasterReset -- Master Reset Count. "Integer"
+
+-- Stats
+Strength -- Strength stat. "Integer"
+Dexterity -- Dexterity stat. "Integer"
+Vitality -- Vitality stat. "Integer"
+Energy -- Energy stat. "Integer"
+Leadership -- Leadership stat (DL). "Integer"
+AddStrength -- Added Strength from items/buffs. "Integer"
+AddDexterity -- Added Dexterity from items/buffs. "Integer"
+AddVitality -- Added Vitality from items/buffs. "Integer"
+AddEnergy -- Added Energy from items/buffs. "Integer"
+AddLeadership -- Added Leadership from items/buffs. "Integer"
+FruitAddPoint -- Points added by fruit. "Integer"
+FruitSubPoint -- Points removed by fruit. "Integer"
+
+-- Vitals (HP, MP, SD, AG)
+Life -- Current HP. "Float"
+MaxLife -- Maximum HP. "Float"
+Mana -- Current MP. "Float"
+MaxMana -- Maximum MP. "Float"
+Shield -- Current SD. "Integer"
+MaxShield -- Maximum SD. "Integer"
+BP -- Current AG (Stamina). "Integer"
+MaxBP -- Maximum AG. "Integer"
+AddLife -- Added Life from items/buffs. "Integer"
+AddMana -- Added Mana from items/buffs. "Integer"
+AddShield -- Added SD from items/buffs. "Integer"
+AddBP -- Added AG from items/buffs. "Integer"
+
+-- Combat Properties
+PhysiDamageMin -- Min Physical Damage. "Integer"
+PhysiDamageMax -- Max Physical Damage. "Integer"
+MagicDamageMin -- Min Magic Damage. "Integer"
+MagicDamageMax -- Max Magic Damage. "Integer"
+CurseDamageMin -- Min Curse Damage. "Integer"
+CurseDamageMax -- Max Curse Damage. "Integer"
+AttackSuccessRate -- Hit Chance/Rate. "Integer"
+PhysiSpeed -- Attack speed (Phys). "Integer"
+MagicSpeed -- Attack speed (Magic). "Integer"
+Defense -- Defense. "Integer"
+MagicDefense -- Magic Defense. "Integer"
+DefenseSuccessRate -- Defense Rate (Evasion). "Integer"
+AttackRange -- Attack Range. "Integer"
+
+-- Elemental Properties
+ElementalAttribute -- Element (1=Fire, 2=Water...). "Integer"
+ElementalDefense -- Elemental Defense. "Integer"
+ElementalDamageMin -- Min Elemental Damage. "Integer"
+ElementalDamageMax -- Max Elemental Damage. "Integer"
+ElementalAttackSuccessRate -- Elemental Hit Rate. "Integer"
+ElementalDefenseSuccessRate -- Elemental Defense Rate. "Integer"
+
+-- Currencies
+Money -- Zen (Inventory). "Integer"
+RuudMoney -- Ruud amount. "Integer"
+WarehouseMoney -- Zen in Warehouse. "Integer"
+
+-- Position & Map
+X -- Current X coordinate. "Integer"
+Y -- Current Y coordinate. "Integer"
+Dir -- Facing direction. "Integer"
+Map -- Current Map Number. "Integer"
+RegenMapNumber -- Respawn Map. "Integer"
+RegenMapX -- Respawn X. "Integer"
+RegenMapY -- Respawn Y. "Integer"
+
+-- Player Killer (PK) & State
+PKCount -- Kill count. "Integer"
+PKLevel -- PK Status (3=Common, 6=Phonomania). "Integer"
+PKTime -- PK reduction time. "Integer"
+KillerType -- Type of entity that killed this obj. "Integer"
+LastAttackerID -- Index of last attacker. "Integer"
+
+-- Party & Guild
+PartyNumber -- Party ID (-1 if none). "Integer"
+GuildNumber -- Guild ID. "Integer"
+GuildName -- Guild Name. "String"
+GuildStatus -- Guild Rank (128=GM, 64=Assist, etc). "Integer"
+
+-- Status & Flags
+Authority -- Admin authority level. "Integer"
+Penalty -- Game penalty. "Integer"
+State -- Object state (e.g., trading, attacking). "Integer"
+Rest -- Resting state. "Integer"
+ViewState -- Viewport state (e.g., invisible). "Integer"
+Change -- Skin ID (Monster ID). "Integer"
+TargetNumber -- Selected Target Index. "Integer"
+SummonIndex -- Summoned Pet Index. "Integer"
+GiftNewbiesStatus -- Welcome Gift Flag (0=Not Received, 1=Received). "Integer"
+IsFullSetItem -- Ancient Set Active. "Integer"
+
+-- Options & Rates (Bonuses from items/buffs)
+DoubleDamageRate -- Double Dmg %. "Integer"
+TripleDamageRate -- Triple Dmg %. "Integer"
+IgnoreDefenseRate -- Ignore Def %. "Integer"
+CriticalDamageRate -- Crit Rate %. "Integer"
+CriticalDamage -- Crit Dmg. "Integer"
+ExcellentDamageRate -- Exc Rate %. "Integer"
+ExcellentDamage -- Exc Dmg. "Integer"
+DamageReflect -- Dmg Reflect %. "Integer"
+ExperienceRate -- Exp Rate %. "Integer"
+MasterExperienceRate -- Master Exp Rate %. "Integer"
+ItemDropRate -- Drop Rate %. "Integer"
+MoneyAmountDropRate -- Zen Drop Rate %. "Integer"
+HPRecovery -- HP Recovery amount. "Integer"
+MPRecovery -- MP Recovery amount. "Integer"
+HPRecoveryRate -- HP Recovery %. "Integer"
+MPRecoveryRate -- MP Recovery %. "Integer"
+FullDamageReflectRate -- Full Reflect %. "Integer"

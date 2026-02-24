@@ -1,5 +1,5 @@
 -- PlayerNotice.lua
--- 当玩家进入游戏时，此脚本会发送一条欢迎信息。
+-- 当玩家进入游戏时，此脚本会发送一条欢迎信息，并为新玩家提供礼包。
 
 -- 定义当角色进入游戏时要执行的函数
 function BridgeFunction_OnCharacterEntry(aIndex)
@@ -11,13 +11,28 @@ function BridgeFunction_OnCharacterEntry(aIndex)
         return
     end
 
-    -- 构建欢迎信息
-    -- string.format 是一个标准的 Lua 函数，用于格式化字符串。
-    local welcomeMessage = string.format("欢迎您，%s！祝您游戏愉快！", player.Name)
+    -- --- 新手礼包逻辑 ---
+    -- 检查是否为1级且从未领取过新手礼包 (GiftNewbiesStatus == 0)
+    if player.Level == 1 and player.GiftNewbiesStatus == 0 then
+        -- 1. 赠送1000升级点数
+        player.LevelUpPoint = player.LevelUpPoint + 1000
 
-    -- 向该玩家发送私人欢迎信息
-    -- GCNoticeSend(aIndex, type, msg)
-    -- 类型 1: 通知显示在屏幕右上角。
+        -- 2. 赠送1,000,000金币
+        gObjCharacterAddZen(player, 1000000)
+
+        -- 3. 设置标志位，防止重复领取
+        player.GiftNewbiesStatus = 1
+        
+        -- 4. 发送礼包提示信息 (类型1: 右上角)
+        GCNoticeSend(aIndex, 1, "欢迎新玩家！您已获得新手礼包：1000点数和100万金币！")
+        
+        -- 5. 记录服务器日志 (绿色)
+        LogAdd(3, "[PlayerNotice] 已为新玩家 " .. player.Name .. " 发放新手礼包。")
+    end
+    -- --- 逻辑结束 ---
+
+    -- 构建并发送常规欢迎信息
+    local welcomeMessage = string.format("欢迎您，%s！祝您游戏愉快！", player.Name)
     GCNoticeSend(aIndex, 1, welcomeMessage)
 
     -- 将操作记录到服务器控制台以进行调试（绿色）
