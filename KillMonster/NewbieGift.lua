@@ -1,4 +1,4 @@
--- PlayerNotice.lua
+-- NewbieGift.lua
 -- 当玩家进入游戏时，此脚本会发送一条欢迎信息，并为新玩家提供礼包。
 
 -- 定义当角色进入游戏时要执行的函数
@@ -27,7 +27,7 @@ function BridgeFunction_OnCharacterEntry(aIndex)
         GCNoticeSend(aIndex, 1, "欢迎新玩家！您已获得新手礼包：1000点数和100万金币！")
         
         -- 5. 记录服务器日志 (绿色)
-        LogAdd(3, "[PlayerNotice] 已为新玩家 " .. player.Name .. " 发放新手礼包。")
+        LogAdd(3, "[NewbieGift] 已为新玩家 " .. player.Name .. " 发放新手礼包。")
     end
     -- --- 逻辑结束 ---
 
@@ -36,7 +36,7 @@ function BridgeFunction_OnCharacterEntry(aIndex)
     GCNoticeSend(aIndex, 1, welcomeMessage)
 
     -- 将操作记录到服务器控制台以进行调试（绿色）
-    LogAdd(3, "[PlayerNotice] 已为玩家 " .. player.Name .. " 发送私人欢迎信息。")
+    LogAdd(3, "[NewbieGift] 已为玩家 " .. player.Name .. " 发送私人欢迎信息。")
 end
 
 -- 使用 BridgeFunctionAttach 将 OnCharacterEntry 事件挂接到我们定义的函数上
@@ -46,4 +46,4 @@ BridgeFunctionAttach("OnCharacterEntry", "BridgeFunction_OnCharacterEntry")
 -- 这有助于调试以确保脚本处于活动状态。
 -- LogAdd(color, message)
 -- 颜色 4 = 蓝色
-LogAdd(4, "[PlayerNotice] 玩家欢迎公告脚本已成功加载并挂接事件。")
+LogAdd(4, "[NewbieGift] 新手礼包脚本已成功加载并挂接事件。")
