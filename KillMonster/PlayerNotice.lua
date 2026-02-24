@@ -13,15 +13,15 @@ function BridgeFunction_OnCharacterEntry(aIndex)
 
     -- 构建欢迎信息
     -- string.format 是一个标准的 Lua 函数，用于格式化字符串。
-    local welcomeMessage = string.format("欢迎玩家 %s 进入游戏!", player.Name)
+    local welcomeMessage = string.format("欢迎您，%s！祝您游戏愉快！", player.Name)
 
-    -- 向所有玩家发送全局通知
-    -- GCNoticeSendToAll(type, msg)
+    -- 向该玩家发送私人欢迎信息
+    -- GCNoticeSendToUser(aIndex, type, msg)
     -- 类型 1: 通知显示在屏幕右上角。
-    GCNoticeSendToAll(1, welcomeMessage)
+    GCNoticeSendToUser(aIndex, 1, welcomeMessage)
 
     -- 将操作记录到服务器控制台以进行调试（绿色）
-    LogAdd(3, "[PlayerNotice] 已为玩家发送欢迎公告: " .. player.Name)
+    LogAdd(3, "[PlayerNotice] 已为玩家 " .. player.Name .. " 发送私人欢迎信息。")
 end
 
 -- 使用 BridgeFunctionAttach 将 OnCharacterEntry 事件挂接到我们定义的函数上
