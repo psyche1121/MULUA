@@ -1,11 +1,11 @@
 -- ================================================
 -- 主逻辑脚本：DailyReward.lua
--- 处理每日登录奖励的核心功能
+-- 处理每日登录奖励的核心功能 (已修正玩家账号属性名错误)
 -- ================================================
 
 -- 步骤1: 加载我们的配置文件。如果失败，脚本将停止运行并报错。
 local config_loaded, config_error = pcall(function()
-    dofile("KillMonster/configDailyReward.lua")
+    murequire("LuaScript.configDailyReward")
 end)
 
 if not config_loaded then
@@ -13,7 +13,7 @@ if not config_loaded then
     return
 end
 
--- 定义日志文件的名字
+-- 定义日志文件的名字 (遵循NewbieGift.lua的成功模式，不带路径)
 local LOG_FILE_NAME = "daily_reward_log.txt"
 
 ---
@@ -70,10 +70,10 @@ function BridgeFunction_OnCharacterEntry(aIndex)
         return
     end
 
-    -- 检查这个账号今天是否已经领过奖了
-    if not hasReceivedToday(player.AccountID) then
+    -- 检查这个账号今天是否已经领过奖了 (已修正为 player.Account)
+    if not hasReceivedToday(player.Account) then
         -- === 未领取，开始发放奖励 ===
-        LogAdd(3, string.format("[DailyReward] 账号 %s 的角色 %s 是今日首次登录，发放奖励。", player.AccountID, player.Name))
+        LogAdd(3, string.format("[DailyReward] 账号 %s 的角色 %s 是今日首次登录，发放奖励。", player.Account, player.Name))
 
         -- 1. 发放金币 (如果配置大于0)
         if ConfigDaily.Rewards.Money > 0 then
@@ -83,8 +83,7 @@ function BridgeFunction_OnCharacterEntry(aIndex)
         -- 2. 发放物品
         if ConfigDaily.Rewards.Items and #ConfigDaily.Rewards.Items > 0 then
             for _, item in ipairs(ConfigDaily.Rewards.Items) do
-                local itemValue = GET_ITEM_VALUE(item.ItemID, item.Level, item.Dur, item.Skill, item.Luck, item.Option, item.Exc, item.Set)
-                ItemGive(aIndex, itemValue)
+                ItemGiveEx(aIndex, item.ItemID, item.Level, item.Dur, item.Skill, item.Luck, item.Option, item.Exc, item.Set, 0, 0, 0, 0, 0, 0, 0, 0, 0)
             end
         end
 
@@ -95,12 +94,12 @@ function BridgeFunction_OnCharacterEntry(aIndex)
         -- 4. 发送提示消息
         GCNoticeSend(aIndex, 1, ConfigDaily.NoticeMessage)
         
-        -- 5. 最重要的一步：立刻写入日志，防止重复领取！
-        recordReward(player.AccountID)
+        -- 5. 最重要的一步：立刻写入日志，防止重复领取！(已修正为 player.Account)
+        recordReward(player.Account)
 
     else
-        -- === 已领取，静默跳过 ===
-        LogAdd(4, string.format("[DailyReward] 账号 %s 今日已领取过奖励。角色 %s 登录时跳过。", player.AccountID, player.Name))
+        -- === 已领取，静默跳过 === (已修正为 player.Account)
+        LogAdd(4, string.format("[DailyReward] 账号 %s 今日已领取过奖励。角色 %s 登录时跳过。", player.Account, player.Name))
     end
 end
 
@@ -108,4 +107,4 @@ end
 BridgeFunctionAttach("OnCharacterEntry", "BridgeFunction_OnCharacterEntry")
 
 -- 脚本加载成功日志
-LogAdd(4, "[DailyReward] 每日登录奖励脚本 (DailyReward.lua) 已成功加载。");
+LogAdd(4, "[DailyReward] 每日登录奖励脚本 (DailyReward.lua) 已成功加载 (已修正账号属性)。");
