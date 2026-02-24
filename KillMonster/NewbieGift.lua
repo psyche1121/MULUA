@@ -1,49 +1,98 @@
--- NewbieGift.lua
--- 当玩家进入游戏时，此脚本会发送一条欢迎信息，并为新玩家提供礼包。
+-- NewbieGift.lua (Log File Version - v6 Robust)
+-- This script uses a local text file to log and check for newbie gift recipients.
 
--- 定义当角色进入游戏时要执行的函数
+-- Configuration: The name of our log file.
+local LOG_FILE_NAME = "newbie_gift_log.txt"
+
+---
+-- Checks if a character name and level combination exists in the log file.
+-- @param name The character name to search for.
+-- @param level The level to check for.
+-- @return boolean: true if found, false otherwise.
+---
+function hasReceivedGift(name, level)
+    local file = io.open(LOG_FILE_NAME, "r")
+    if not file then
+        return false
+    end
+
+    -- Create the specific record we are looking for, e.g., "PlayerName,1"
+    local record_to_find = name .. "," .. level
+
+    for line in file:lines() do
+        -- We perform a direct string comparison, which is very efficient.
+        if line:match("^%s*(.-)%s*$") == record_to_find then
+            file:close()
+            return true -- Found the exact record.
+        end
+    end
+
+    file:close()
+    return false
+end
+
+---
+-- Appends a character name and their level to the log file.
+-- @param name The character name to add.
+-- @param level The level of the character when receiving the gift.
+---
+function recordGiftReceived(name, level)
+    local file = io.open(LOG_FILE_NAME, "a")
+    if not file then
+        LogAdd(2, "[NewbieGift] CRITICAL ERROR: Could not open log file for writing: " .. LOG_FILE_NAME)
+        return
+    end
+
+    -- Write the record in "name,level" format.
+    file:write(name .. "," .. level .. "\n")
+    file:close()
+end
+
+
+-- Main function hooked to the character entry event.
 function BridgeFunction_OnCharacterEntry(aIndex)
-    -- 从索引获取玩家对象
     local player = GetUser(aIndex)
 
-    -- 确保玩家对象有效并且是一个真实玩家 (Type == 1)
     if player == nil or player.Type ~= 1 then
         return
     end
 
-    -- --- 新手礼包逻辑 ---
-    -- 检查是否为1级且从未领取过新手礼包 (GiftNewbiesStatus == 0)
-    if player.Level == 1 and player.GiftNewbiesStatus == 0 then
-        -- 1. 赠送1000升级点数
-        player.LevelUpPoint = player.LevelUpPoint + 1000
+    -- --- Newbie Gift Logic (Log File Method) ---
+    -- We only process level 1 characters. This is our primary, most important check.
+    if player.Level == 1 then
+        -- Secondary, more robust check against the log file.
+        -- We check if a record for this player at this specific level (1) already exists.
+        if not hasReceivedGift(player.Name, player.Level) then
+            -- Not found in the log, so this is a new recipient.
+            LogAdd(3, "[NewbieGift] New recipient found: " .. player.Name .. " at Level 1. Granting gift and logging.")
 
-        -- 2. 赠送1,000,000金币
-        gObjCharacterAddZen(player, 1000000)
+            -- 1. Grant rewards.
+            player.LevelUpPoint = player.LevelUpPoint + 1000
+            player.Money = player.Money + 1000000
 
-        -- 3. 设置标志位，防止重复领取
-        player.GiftNewbiesStatus = 1
-        
-        -- 4. 发送礼包提示信息 (类型1: 右上角)
-        GCNoticeSend(aIndex, 1, "欢迎新玩家！您已获得新手礼包：1000点数和100万金币！")
-        
-        -- 5. 记录服务器日志 (绿色)
-        LogAdd(3, "[NewbieGift] 已为新玩家 " .. player.Name .. " 发放新手礼包。")
+            -- 2. IMPORTANT: Record the name and level in our log file to prevent future grants.
+            recordGiftReceived(player.Name, player.Level)
+
+            -- 3. Update player stats and notify them.
+            UserCalcAttribute(aIndex)
+            UserInfoSend(aIndex)
+            GCNoticeSend(aIndex, 1, "欢迎新玩家！您已获得新手礼包：1000点数和100万金币！")
+
+        else
+            -- Found in the log, do nothing about the gift.
+            LogAdd(4, "[NewbieGift] Returning player " .. player.Name .. " already in log for Level 1. Skipping gift.")
+        end
     end
-    -- --- 逻辑结束 ---
+    -- --- End of Gift Logic ---
 
-    -- 构建并发送常规欢迎信息
+    -- Send a standard welcome message regardless of gift status.
     local welcomeMessage = string.format("欢迎您，%s！祝您游戏愉快！", player.Name)
     GCNoticeSend(aIndex, 1, welcomeMessage)
-
-    -- 将操作记录到服务器控制台以进行调试（绿色）
-    LogAdd(3, "[NewbieGift] 已为玩家 " .. player.Name .. " 发送私人欢迎信息。")
 end
 
--- 使用 BridgeFunctionAttach 将 OnCharacterEntry 事件挂接到我们定义的函数上
+
+-- Attach our function to the server's OnCharacterEntry event.
 BridgeFunctionAttach("OnCharacterEntry", "BridgeFunction_OnCharacterEntry")
 
--- 添加一条日志消息，以确认脚本已被服务器加载。
--- 这有助于调试以确保脚本处于活动状态。
--- LogAdd(color, message)
--- 颜色 4 = 蓝色
-LogAdd(4, "[NewbieGift] 新手礼包脚本已成功加载并挂接事件。")
+-- Log a message to confirm the script has been loaded.
+LogAdd(4, "[NewbieGift] 新手礼包脚本已成功加载 (v6-增强日志版)。")
