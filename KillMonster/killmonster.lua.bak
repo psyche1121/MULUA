@@ -3,22 +3,22 @@ if not _G.KillMonsterScriptLoaded then
     LogAdd(LOG_BLUE,"[LuaScript.killmonster] SCRIPT LOADED SUCCESSFULLY - By PSYCHE")
     _G.KillMonsterScriptLoaded = true
 end
-murequire("LuaScript.configkillmonster")  -- Ö»¼ÓÔØÅäÖÃ£¬²»Òª¼ÓÔØ×Ô¼º
+murequire("LuaScript.configkillmonster")  -- åªåŠ è½½é…ç½®ï¼Œä¸è¦åŠ è½½è‡ªå·±
 BridgeFunctionAttach("OnMonsterDie", "BridgeFunction_OnMonsterDie")
 
--- ĞÂÔö£º°´È¨ÖØËæ»úÑ¡ÔñÎïÆ·£¨ºËĞÄº¯Êı£¬²»Ó°ÏìÔ­ÓĞÂß¼­£©
+-- æ–°å¢ï¼šæŒ‰æƒé‡éšæœºé€‰æ‹©ç‰©å“ï¼ˆæ ¸å¿ƒå‡½æ•°ï¼Œä¸å½±å“åŸæœ‰é€»è¾‘ï¼‰
 local function getRandomItemByRate(dropList)
     local totalRate = 0
-    -- ¼ÆËã×ÜÈ¨ÖØ
+    -- è®¡ç®—æ€»æƒé‡
     for _, item in ipairs(dropList) do
         totalRate = totalRate + (item.Rate or 0)
     end
-    -- ×ÜÈ¨ÖØÎª0Ê±·µ»Ønil£¨·ÀÖ¹±¨´í£©
+    -- æ€»æƒé‡ä¸º0æ—¶è¿”å›nilï¼ˆé˜²æ­¢æŠ¥é”™ï¼‰
     if totalRate <= 0 then return nil end
-    -- Ëæ»úÒ»¸öÈ¨ÖØÖµ
+    -- éšæœºä¸€ä¸ªæƒé‡å€¼
     local randomNum = math.random(1, totalRate)
     local currentRate = 0
-    -- Æ¥ÅäËæ»úÖµ¶ÔÓ¦µÄÎïÆ·
+    -- åŒ¹é…éšæœºå€¼å¯¹åº”çš„ç‰©å“
     for _, item in ipairs(dropList) do
         currentRate = currentRate + (item.Rate or 0)
         if randomNum <= currentRate then
@@ -28,26 +28,26 @@ local function getRandomItemByRate(dropList)
     return nil
 end
 
--- Ô­ÓĞºËĞÄº¯Êı£¬½öÌæ»»Ëæ»úµôÂä²¿·Ö
+-- åŸæœ‰æ ¸å¿ƒå‡½æ•°ï¼Œä»…æ›¿æ¢éšæœºæ‰è½éƒ¨åˆ†
 function BridgeFunction_OnMonsterDie(monsterIndex, killerIndex)
     local monster = GetUser(monsterIndex)
     local killer = GetUser(killerIndex)
     if killer ~= nil and killer.Type == 1 then
-        GCNoticeSend(killer.Index, 1, "×Ô¼º¿É¼ûµÄ¹«¸æÌáÊ¾!")
-        -- ¹«¸æ£ºÍæ¼ÒÃû×Ö + ¹ÖÎïµÈ¼¶
-        GCNoticeSendToAll(1, killer.Name .. " »÷É±ÁË¹ÖÎï (Class=".. monster.Class ..", Level=".. monster.Level ..")")
-        -- ÅĞ¶Ï¹ÖÎïµÈ¼¶ÊÇ·ñ´ïµ½ãĞÖµ£¨¡İ100²Å´¥·¢£©
+        GCNoticeSend(killer.Index, 1, "è‡ªå·±å¯è§çš„å…¬å‘Šæç¤º!")
+        -- å…¬å‘Šï¼šç©å®¶åå­— + æ€ªç‰©ç­‰çº§
+        GCNoticeSendToAll(1, killer.Name .. " å‡»æ€äº†æ€ªç‰© (Class=".. monster.Class ..", Level=".. monster.Level ..")")
+        -- åˆ¤æ–­æ€ªç‰©ç­‰çº§æ˜¯å¦è¾¾åˆ°é˜ˆå€¼ï¼ˆâ‰¥100æ‰è§¦å‘ï¼‰
         if monster ~= nil and monster.Level >= Config.MonsterLevelThreshold then
             local dropList = Config.DropItems
-            -- Ìæ»»£º´Ó´¿Ëæ»ú ¡ú °´È¨ÖØËæ»ú
+            -- æ›¿æ¢ï¼šä»çº¯éšæœº â†’ æŒ‰æƒé‡éšæœº
             local item = getRandomItemByRate(dropList)
-            -- Ôö¼Ó¿ÕÖµÅĞ¶Ï£¨·ÀÖ¹ÎŞÈ¨ÖØÎïÆ·±¨´í£©
+            -- å¢åŠ ç©ºå€¼åˆ¤æ–­ï¼ˆé˜²æ­¢æ— æƒé‡ç‰©å“æŠ¥é”™ï¼‰
             if item then
-                -- µôÂäÎïÆ·£¨Ô­ÓĞAPI²ÎÊıÍêÈ«²»±ä£©
+                -- æ‰è½ç‰©å“ï¼ˆåŸæœ‰APIå‚æ•°å®Œå…¨ä¸å˜ï¼‰
                 ItemDropEx(killer.Index, killer.Map, killer.X, killer.Y,
                     item.ID, 0, 255, 1, 1, 7, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0,0)
-                -- ¹«¸æµôÂä½á¹û£¨Ô­ÓĞÎÄ°¸²»±ä£©
-                GCNoticeSendToAll(1, killer.Name .. " »÷É±¸ßµÈ¼¶¹ÖÎï£¬µôÂäÁË [".. item.Name .. "]")
+                -- å…¬å‘Šæ‰è½ç»“æœï¼ˆåŸæœ‰æ–‡æ¡ˆä¸å˜ï¼‰
+                GCNoticeSendToAll(1, killer.Name .. " å‡»æ€é«˜ç­‰çº§æ€ªç‰©ï¼Œæ‰è½äº† [".. item.Name .. "]")
             end
         end
     end
